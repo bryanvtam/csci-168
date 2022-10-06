@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+    <body>
+        <canvas id = "canvas" width="600" height ="600" style="border: 2px solid black">
+            <script>
+                var canvas = document.getElementById("canvas");
+                var ctx = canvas.getContext("2d");
+                ctx.fillStyle = "red";
+                ctx.font = "30px Arial";
+                ctx.textAlign = "center";
+                ctx.textBaseline = "Alphabetic";
+                ctx.save();
+                
+                ctx.translate(300,300);
+                ctx.rotate(270*Math.PI/180);
+                ctx.fillText("P",0,0);
+                ctx.restore();
+
+                //write a "P" at x=300 y=300 
+                //with text aligned center and baseline = alphabetic
+                ctx.fillText("P",300,300);
+                
+                //center dot at x=300 y=300
+                ctx.beginPath();
+                ctx.arc(300,300, 1,0,2*Math.PI);
+                ctx.lineWidth = 10;
+                ctx.fill();
+                ctx.closePath();
+
+                //circle of raidus 190 centered at x=300 y=300
+                ctx.beginPath();
+                ctx.arc(300,300, 190,0,2*Math.PI);
+                ctx.lineWidth = 1;
+                ctx.stroke();
+                ctx.closePath();  
+                
+                ctx.beginPath();
+                ctx.moveTo(0,100);
+                ctx.lineTo(150,100);
+                ctx.stroke();
+                ctx.textAlign = "center";
+                ctx.textBaseline = "Alphabetic";
+                ctx. font = "100px Arial";
+                ctx.fillText("S",100,100);
+            </script>
+        </canvas>
+    </body>
+</html>

@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang='en'>
+  <head>
+    <meta charset='utf-8'>
+    <title>
+        Curved Text in SVG
+    </title>
+    <script src="https://d3js.org/d3.v3.min.js" charset='utf-8'></script>
+    <style type="text/css">
+      svg {
+        display: block;
+        margin: 0 auto;
+      }
+
+      circle {
+        fill: blue;
+      }
+
+      path {
+        fill: none;
+        stroke: white;
+        stroke-width: 1px;
+      }
+
+      text {
+        font-family: cursive;
+        font-size: 48px;
+        font-weight: bold;
+        text-anchor: middle;
+      }
+    </style>
+  </head>
+  <body>
+    <script type="text/javascript">
+      var width = 960, height = 500, radius = 200;
+      // insert the main SVG element
+      var svg = d3.select('body').append('svg')
+        .attr({
+          height: height,
+          width: width,
+          id: 'mainSVG'
+        });
+      // get the width of the SVG
+      var width = document.getElementById('mainSVG').getBoundingClientRect().width;
+      // path data generation depends on width and radius we've chosen
+      function getPathData() {
+        // adjust the radius a little so our text's baseline isn't sitting directly on the circle
+        var r = radius * 0.95;
+        var startX = width/2 - r;
+        return 'm' + startX + ',' + (height/2) + ' ' +
+          'a' + r + ',' + r + ' 0 0 0 ' + (2*r) + ',0';
+      }
+      // add our path definition for the curved textPath to follow
+      svg.append('defs')
+        .append('path')
+        .attr({
+          d: getPathData,
+          id: 'curvedTextPath'
+        });
+      // add our circle element centered within the svg
+      svg.append('circle')
+        .attr({
+          cx: width/2,
+          cy: height/2,
+          r: radius,
+          id: 'mainCircle'
+        });
+      // add our path element in the main SVG so we can see it for reference
+      svg.append('path')
+        .attr({
+          d: getPathData,
+          id: 'visiblePath'
+        });
+      // add our text with embedded textPath and link the latter to the defined #curvedTextPath
+      svg.append('text')
+        .append('textPath')
+        .attr({
+          startOffset: '50%',
+          'xlink:href': '#curvedTextPath'
+        })
+        .text('Hello, world!');
+    </script>
+  </body>
+</html>

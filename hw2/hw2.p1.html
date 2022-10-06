@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+    <head>
+
+    </head>
+    <body>
+        <canvas id = "canvas" width="600" height ="600" style="border: 2px solid black">
+            <script>
+                var canvas = document.getElementById("canvas");
+                var ctx = canvas.getContext("2d");
+                
+                //stroke set to color burgundy
+                ctx.strokeStyle = "rgb(170,0,26)";
+
+                //draw outter circle of SCU logo                
+                ctx.beginPath();
+                //CanvasPath.arc(x: number, y: number, radius: number, startAngle: number, endAngle: number, counterclockwise?: boolean)
+                ctx.arc(300,300, 290,0,2*Math.PI);
+                ctx.lineWidth = 15;
+                ctx.stroke();
+                //close path of each circle of the strokes will connect
+                //path is like drawing without lifting pencil up till close path
+                ctx.closePath();
+
+                //draw inner circle of SCU logo
+                ctx.beginPath();
+                ctx.arc(300,300, 190,0,2*Math.PI);
+                ctx.lineWidth = 10;
+                ctx.stroke();
+                ctx.closePath();
+                
+                ctx.beginPath();
+                //draw the SCU logo text
+                ctx. font = "100px Arial";
+                ctx.textAlign = "center";
+                var scu = "Santa Clara University . 1851 . ";
+                ctx.closePath();
+                //number of chars in scu = 32, inclues spaces
+                ctx.save();
+                //circle center 300,300, radius of inner circle is 190
+                //plus 12
+                ctx.translate(300,98);
+                ctx.rotate(0*Math.PI/180);
+                ctx.fillText("S", 0, 0);
+                ctx.restore();
+
+                ctx.beginPath();
+                ctx.arc(300,300,202,0,2*Math.PI);
+                ctx.lineWidth = 1;
+                ctx.stroke();
+                ctx.closePath();
+                
+                //how to split a circle into equal pieces
+                //32 characters in "scu" logo including the spaces
+                //divide the circle's total degress (360) by number of characters
+                //360/32 = 11.25
+                //how to find the point at each equal split:
+                //x = radius * cos(angle)
+                //y = radius * sin(angle)
+                
+                ctx.beginPath();
+                var x = 202 * Math.cos(100);
+                var y = -202 * Math.sin(100);
+                ctx.arc(300 + x, 300+ y, 5,0,2*Math.PI);
+                ctx.fill();
+                ctx.closePath();
+                
+                ctx.fillText("done",100,100);
+                // function writeCircleText(text, x, y, raidus,){
+                //     //we use textBaseline to get each char to sit on the radius of the circle, which would be slightly above the radius of the inner circle
+                //     var deg_per_char = (360/text.length);
+                //     var origin = 0;
+                //     for(var i = 0; i <text.length; ++i){
+
+                //     }
+
+                // }
+
+                // for(var i = 1; i  <=12; ++i){
+                //         ctx.save();
+                //         ctx.rotate(i*Math.PI/6.0);
+                //         ctx.translate(0,-200);
+                //         ctx.rotate(-i*Math.PI/6.0);
+                //         ctx.translate(300,350);
+                //         ctx.fillText(i,0,0);
+                //         ctx.restore();
+                //     }
+            </script>
+        </canvas>
+    </body>
+</html>
