@@ -1,0 +1,109 @@
+<!doctype html>
+<html>
+    <body>
+        <canvas id="canvas" width="400" height="400" style="background-color:#333">
+            <script>
+                var canvas = document.getElementById("canvas");
+                canvas.addEventListener('mousemove', function (event) {
+                    px = Math.min(event.offsetX, canvas.width - pwidth);
+                    display();
+                });
+
+                window.addEventListener('keydown', function (event){
+                    if (event.keyCode == 37){   // left arrow 
+                        if (px - dp >= 0)
+                            px = px - dp;
+                    }
+                    else if (event.keyCode == 39){   // right arrow
+                        if (px + pwidth + dp < canvas.width)
+                            px += dp;
+                    }
+                });
+
+                var ctx = canvas.getContext("2d");
+
+                // ball position, size, speeds
+                var bx = 0, by = 100, bsize = 10, dx = 2 + Math.random() % 10, dy = 2 + Math.random() % 10;
+
+                // paddle position, size
+                var px = 0, pwidth = 50, pheight = 10, dp = 6;
+
+                // row of bricks
+                const brick_num = ["b1", "b2", "b3", "b4", "b5", "b6", "b7", "b8"];
+                var bricks = {
+                    height:50,
+                    width:50,
+                    y_value: 40,
+                    b1: {x:0, destoryed:false},
+                    b2: {x:50, destoryed:false},
+                    b3: {x:100, destoryed:false},
+                    b4: {x:150, destoryed:false},
+                    b5: {x:200, destoryed:false},
+                    b6: {x:250, destoryed:false},
+                    b7: {x:300, destoryed:false},
+                    b8: {x:350, destoryed:false}
+                };
+
+                var timerID = setInterval(update, 10);
+                display();
+
+                function update(){
+                    bx += dx;
+                    if (bx > canvas.width || bx < 0)
+                        dx = -dx;
+                    by += dy;
+                    if (by < 0)
+                        dy = -dy;
+                    else if (by >= canvas.height - pheight){
+                        if (bx >= px && bx <= px + pwidth)
+                            dy = -dy;
+                        else
+                            clearInterval(timerID);
+                    }
+
+                    //check if the ball hits a brick
+                    //check if the ball is at the height of the bricks which is y = 50
+                    //if at height check x-pos of ball if it hits any of the bricks
+
+                    for(let i = 0; i<brick_num.length; ++i){
+                        let temp_brick = bricks[brick_num[i]];
+                        if(temp_brick.destoryed)
+                            continue;
+                        else{
+                            if(bx >= temp_brick.x && bx <= (temp_brick.x+50)){
+                                if(by >= bricks.y_value && by <= (bricks.y_value+50)){
+                                    temp_brick.destoryed = true;
+                                    dy = -dy;
+                                    break;
+                                }
+                                else{
+                                    continue;
+                                }
+                            }
+                        }
+                    }
+                    display();
+                }
+
+                function display(){
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    ctx.fillStyle = "red";
+                    ctx.fillRect(bx, by, bsize, bsize);
+
+                    ctx.fillStyle = "green";
+                    ctx.fillRect(px, canvas.height - pheight, pwidth, pheight);
+
+                    ctx.fillStyle = "brown";
+                    ctx.strokeStyle = "black";
+                    ctx.lineWidth = 1;
+                    for(let i = 0; i <brick_num.length; ++i){
+                        if (bricks[brick_num[i]].destoryed == false){
+                            ctx.fillRect(bricks[brick_num[i]].x, bricks.y_value, bricks.width, bricks.height);
+                            ctx.strokeRect(bricks[brick_num[i]].x, bricks.y_value, bricks.width, bricks.height);
+                        }
+                    }
+                }
+            </script>
+        </canvas>
+    </body>
+</html>

@@ -45,7 +45,7 @@
                     //draw inner circle of SCU logo
                     ctx.beginPath();
                     ctx.arc(300,300, 190,0,2*Math.PI);
-                    ctx.lineWidth = 6;
+                    ctx.lineWidth = 10;
                     ctx.stroke();
                 }
 
@@ -145,8 +145,8 @@
 
                 function create_star(){
                     ctx.lineWidth = 1;
-                    let inner_r = 4;
-                    let outter_r = 10;
+                    let inner_r = 3;
+                    let outter_r = 8;
                     
                     ctx.save()
                     ctx.translate(300,300);
@@ -177,14 +177,14 @@
                 function draw_stars(){
                     let angle = 25.5;
                     for(let i = 0; i <8; ++i){
-                        draw_star(170*(Math.cos(angle*Math.PI/180)),-170*(Math.sin(angle*Math.PI/180)));
+                        draw_star(175*(Math.cos(angle*Math.PI/180)),-175*(Math.sin(angle*Math.PI/180)));
                         angle += 18.5;
                     }
 
                     let angle2 =50;
                     for(let i = 0; i <5; ++i){
-                        draw_star(135*(Math.cos(angle2*Math.PI/180)),-135*(Math.sin(angle2*Math.PI/180)));
-                        angle2 += 21.5;
+                        draw_star(145*(Math.cos(angle2*Math.PI/180)),-145*(Math.sin(angle2*Math.PI/180)));
+                        angle2 += 20.5;
                     }
                     
                 }
@@ -206,13 +206,6 @@
                             ctx.rotate(-((90 + degree) * Math.PI/180));
                             ctx.fillText(scu[i],0,0);
                         }
-                        else if(i == 30 || i == 23){
-                            ctx.save();
-                            //middle  = 240
-                            ctx.translate(240*(Math.cos(degree*(Math.PI/180))),240*(Math.sin(-degree*(Math.PI/180))));
-                            draw_circle_letter();
-                            ctx.restore;
-                        }
                         else{
                             ctx.save();
                             ctx.translate(300+x, 300+y);
@@ -224,85 +217,111 @@
                         degree -= 11.25;
                     }
                 }
+            </script>
+        </canvas>
 
-                function draw_circle_letter(){
-                    ctx.beginPath();
-                    ctx.arc(300,300,8,0,2*Math.PI);
-                    ctx.fill();
+        <canvas id="canvas" width="400" height="400" style="background-color:#333">
+            <script>
+                var canvas = document.getElementById("canvas");
+                canvas.addEventListener('mousemove', function (event) {
+                    px = Math.min(event.offsetX, canvas.width - pwidth);
+                    display();
+                });
+
+                window.addEventListener('keydown', function (event){
+                    if (event.keyCode == 37){   // left arrow 
+                        if (px - dp >= 0)
+                            px = px - dp;
+                    }
+                    else if (event.keyCode == 39){   // right arrow
+                        if (px + pwidth + dp < canvas.width)
+                            px += dp;
+                    }
+                });
+
+                var ctx = canvas.getContext("2d");
+
+                // ball position, size, speeds
+                var bx = 0, by = 100, bsize = 10, dx = 2 + Math.random() % 10, dy = 2 + Math.random() % 10;
+
+                // paddle position, size
+                var px = 0, pwidth = 50, pheight = 10, dp = 6;
+
+                // row of bricks
+                const brick_num = ["b1", "b2", "b3", "b4", "b5", "b6", "b7", "b8"];
+                var bricks = {
+                    height:50,
+                    width:50,
+                    y_value: 40,
+                    b1: {x:0, destoryed:false},
+                    b2: {x:50, destoryed:false},
+                    b3: {x:100, destoryed:false},
+                    b4: {x:150, destoryed:false},
+                    b5: {x:200, destoryed:false},
+                    b6: {x:250, destoryed:false},
+                    b7: {x:300, destoryed:false},
+                    b8: {x:350, destoryed:false}
+                };
+
+                var timerID = setInterval(update, 10);
+                display();
+
+                function update(){
+                    bx += dx;
+                    if (bx > canvas.width || bx < 0)
+                        dx = -dx;
+                    by += dy;
+                    if (by < 0)
+                        dy = -dy;
+                    else if (by >= canvas.height - pheight){
+                        if (bx >= px && bx <= px + pwidth)
+                            dy = -dy;
+                        else
+                            clearInterval(timerID);
+                    }
+
+                    //check if the ball hits a brick
+                    //check if the ball is at the height of the bricks which is y = 50
+                    //if at height check x-pos of ball if it hits any of the bricks
+
+                    for(let i = 0; i<brick_num.length; ++i){
+                        let temp_brick = bricks[brick_num[i]];
+                        if(temp_brick.destoryed)
+                            continue;
+                        else{
+                            if(bx >= temp_brick.x && bx <= (temp_brick.x+50)){
+                                if(by >= bricks.y_value && by <= (bricks.y_value+50)){
+                                    temp_brick.destoryed = true;
+                                    dy = -dy;
+                                    break;
+                                }
+                                else{
+                                    continue;
+                                }
+                            }
+                        }
+                    }
+                    display();
                 }
 
-                // function draw_scuLetters(){
-                //     ctx.clearRect(0,0,canvas.width,canvas.height);
-                //     //stroke set to color burgundy
-                //     ctx.strokeStyle = "rgb(170,0,26)";
+                function display(){
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    ctx.fillStyle = "red";
+                    ctx.fillRect(bx, by, bsize, bsize);
 
-                //     //draw outter circle of SCU logo                
-                //     ctx.beginPath();
-                //     ctx.arc(300,300, 290,0,2*Math.PI); //CanvasPath.arc(x: number, y: number, radius: number, startAngle: number, endAngle: number, counterclockwise?: boolean)
-                //     ctx.lineWidth = 15;
-                //     ctx.stroke();
-                //     ctx.closePath(); //close path of each circle of the strokes will connect
-                //     //path is like drawing without lifting pencil up till close path
+                    ctx.fillStyle = "green";
+                    ctx.fillRect(px, canvas.height - pheight, pwidth, pheight);
 
-                //     //draw inner circle of SCU logo
-                //     ctx.beginPath();
-                //     ctx.arc(300,300, 190,0,2*Math.PI);
-                //     ctx.lineWidth = 10;
-                //     ctx.stroke();
-                //     ctx.closePath();
-
-                //     //draw the sheild
-                //     ctx.lineWidth = 6;
-                    
-                //     ctx.beginPath();
-                //     ctx.moveTo(300,510);
-                //     //right side of shield
-                //     ctx.quadraticCurveTo(400, 410, 410, 280);
-                //     //top right of the shield
-                //     ctx.quadraticCurveTo(350,300,300,260);
-                //     //top left of the shield
-                //     ctx.quadraticCurveTo(250,300,190,280);
-                //     //lefft side of shield
-                //     ctx.quadraticCurveTo(200,410,300, 510);
-                //     // ctx.lineTo(300,270);
-                //     ctx.stroke();
-                //     ctx.fillStyle = "white";
-                //     ctx.fill();
-
-                //     ctx.lineWidth = 1;
-                //     ctx.beginPath();
-                //     ctx.moveTo(300,490);
-                //     //right side of inner shield
-                //     ctx.quadraticCurveTo(380,390,390,300);
-                //     //top right of inner shield
-                //     ctx.quadraticCurveTo(350,320,300,280);
-                //     //top left of inner shield
-                //     ctx.quadraticCurveTo(250,320,210,300);
-                //     //left side of inner shield
-                //     ctx.quadraticCurveTo(220,390,300,490);
-                //     ctx.stroke();
-
-                //     ctx.font = "80px Arial";
-                //     ctx.fillStyle = "rgb(170,0,26)";
-                //     ctx.textAlign = "center";
-                //     ctx.textBaseline = "Alphabetic";
-                //     let scu = "SANTA CLARA UNIVERSITY . 1851 . ";
-
-                //     let radius_of_letters = 202;
-                //     let temp_degree = degree;
-                //     for(let i = 0; i <scu.length; ++i){
-                //         let x = radius_of_letters * (Math.cos(temp_degree*(Math.PI/180)));
-                //         let y = radius_of_letters * (Math.sin(-temp_degree*(Math.PI/180)));
-                //         ctx.save();
-                //         ctx.translate(300+x, 300+y);
-                //         ctx.rotate(-((-90 + temp_degree) * Math.PI/180));
-                //         ctx.fillText(scu[i],0,0);
-                //         ctx.restore();
-
-                //         temp_degree -= 11.25;
-                //     }
-                //     degree +=0.3;
-                // }
+                    ctx.fillStyle = "brown";
+                    ctx.strokeStyle = "black";
+                    ctx.lineWidth = 1;
+                    for(let i = 0; i <brick_num.length; ++i){
+                        if (bricks[brick_num[i]].destoryed == false){
+                            ctx.fillRect(bricks[brick_num[i]].x, bricks.y_value, bricks.width, bricks.height);
+                            ctx.strokeRect(bricks[brick_num[i]].x, bricks.y_value, bricks.width, bricks.height);
+                        }
+                    }
+                }
             </script>
         </canvas>
     </body>

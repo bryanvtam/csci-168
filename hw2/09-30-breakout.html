@@ -1,0 +1,77 @@
+<!doctype html>
+<html>
+
+<body>
+<canvas id="canvas" width="400" height="400" style="background-color:#333"/>
+
+<script>
+var canvas = document.getElementById("canvas");
+canvas.addEventListener('mousemove', function (event) 
+{
+  px = Math.min(event.offsetX, canvas.width - pwidth);
+  display();
+});
+
+window.addEventListener('keydown', function (event)
+{
+   if (event.keyCode == 37)   // left arrow
+   {
+     if (px - dp >= 0)
+       px = px - dp;
+   }
+   else if (event.keyCode == 39)   // right arrow
+   {
+     if (px + pwidth + dp < canvas.width)
+       px += dp;
+   }
+});
+
+
+var ctx = canvas.getContext("2d");
+
+// ball position, size, speeds
+var bx = 0, by = 0, bsize = 10, dx = 1 + Math.random() % 10, dy = 1 + Math.random() % 10;
+
+// paddle position, size
+var px = 0, pwidth = 50, pheight = 10, dp = 6;
+
+var timerID = setInterval(update, 10);
+display();
+
+
+function update()
+{
+   bx += dx;
+   if (bx > canvas.width || bx < 0)
+     dx = -dx;
+  
+   by += dy;
+   if (by < 0)
+     dy = -dy;
+
+   else if (by >= canvas.height - pheight)
+   {
+     if (bx >= px && bx <= px + pwidth)
+       dy = -dy;
+     else
+       clearInterval(timerID);
+   }
+
+
+   display();
+
+}
+function display()
+{
+   ctx.clearRect(0, 0, canvas.width, canvas.height);
+   ctx.fillStyle = "red";
+   ctx.fillRect(bx, by, bsize, bsize);
+
+   ctx.fillStyle = "green";
+   ctx.fillRect(px, canvas.height - pheight, pwidth, pheight);
+}
+
+
+</script>
+</body>
+</html>
